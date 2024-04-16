@@ -148,4 +148,9 @@ public class TouristRouteRepository : ITouristRouteRepository
     {
         appDbContext.LineItems.RemoveRange(lineItems);
     }
+
+    public async Task AddOrderAsync(Order order)
+    {
+        await appDbContext.Orders.AddAsync(order);
+    }
 }
