@@ -1,11 +1,13 @@
 ﻿using FakeTrip.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Reflection;
 
 namespace FakeTrip.Databases;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<IdentityUser>  /* DbContext*/
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
