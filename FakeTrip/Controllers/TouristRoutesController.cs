@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using FakeTrip.Constants;
 using FakeTrip.Dtos;
 using FakeTrip.Helpers;
 using FakeTrip.Models;
 using FakeTrip.ResourceParameters;
 using FakeTrip.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,6 +51,7 @@ public class TouristRoutesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> CreateTouristRoute([FromBody] TouristRouteForCreationDto touristRouteForCreationDto)
     {
         var touristRoute = mapper.Map<TouristRoute>(touristRouteForCreationDto);
@@ -62,6 +65,7 @@ public class TouristRoutesController : ControllerBase
             );
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateTouristRoute([FromRoute] Guid id,
         [FromBody] TouristRouteForUpdateDto touristRouteForUpdateDto)
@@ -77,6 +81,7 @@ public class TouristRoutesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPatch("{id}")]
     public async Task<ActionResult> PartiallyUpdateTouristRoute(
             [FromRoute] Guid id,
@@ -102,6 +107,7 @@ public class TouristRoutesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteTouristRoute([FromRoute] Guid id)
     {
@@ -116,6 +122,7 @@ public class TouristRoutesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("({ids})")]
     public async Task<ActionResult> DeleteByIDs(
         [ModelBinder(BinderType = typeof(ArrayModelBinder))][FromRoute] IEnumerable<Guid> ids)

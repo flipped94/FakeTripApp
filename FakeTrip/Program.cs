@@ -4,11 +4,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddStandard();
 
+builder.AddAuthServices();
+
 builder.AddDatabaseContext();
 
-builder.AddCustomService();
+builder.AddCustomServices();
 
 var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

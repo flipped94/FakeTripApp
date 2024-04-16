@@ -2,6 +2,7 @@
 using FakeTrip.Dtos;
 using FakeTrip.Models;
 using FakeTrip.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FakeTrip.Controllers;
@@ -56,6 +57,7 @@ public class TouristRoutePicturesController : ControllerBase
         return Ok(mapper.Map<TouristRoutePicture>(pictureFromrepo));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult> CreateTouristRoutePicture(
             [FromRoute] Guid touristRouteId,
@@ -83,6 +85,7 @@ public class TouristRoutePicturesController : ControllerBase
         );
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeletePicture([FromRoute] Guid touristRouteId, [FromRoute] int id)
     {
