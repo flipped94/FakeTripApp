@@ -34,7 +34,7 @@ public class ShoppingCartController : ControllerBase
     [Authorize]
     public async Task<ActionResult<ShoppingCartDto>> GetShoppingCart()
     {
-        var userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        var userId = GetUserId();
 
         var shoppingCartFromRepo = await touristRouteRepository.GetShoppingCartByUserIdAsync(userId);
 
@@ -46,7 +46,7 @@ public class ShoppingCartController : ControllerBase
     [HttpPost("items")]
     public async Task<ActionResult<ShoppingCartDto>> AddShoppingCartItem([FromBody] AddShoppingCartItemDto addShoppingCartItemDto)
     {
-        var userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        string userId = GetUserId();
 
         var shoppingCart = await touristRouteRepository.GetShoppingCartByUserIdAsync(userId);
 
@@ -69,6 +69,11 @@ public class ShoppingCartController : ControllerBase
         await touristRouteRepository.SaveAsync();
 
         return Ok(mapper.Map<ShoppingCartDto>(shoppingCart));
+    }
+
+    private string GetUserId()
+    {
+        return httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
     }
 
     [Authorize]
@@ -95,5 +100,28 @@ public class ShoppingCartController : ControllerBase
         touristRouteRepository.DeleteShoppingCartItems(lineitems);
         await touristRouteRepository.SaveAsync();
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpPost("checkout")]
+    public async Task<ActionResult<OrderDto>> Checkout()
+    {
+        var userId = GetUserId();
+
+        var shoppingCart = await touristRouteRepository.GetShoppingCartByUserIdAsync(userId);
+
+        var order = new Order()
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            State = OrderStateEnum.Pending,
+            OrderItems = shoppingCart.ShoppingCartItems,
+            CreateDateUTC = DateTime.UtcNow,
+        };
+        shoppingCart.ShoppingCartItems = null;
+        await touristRouteRepository.AddOrderAsync(order);
+        await touristRouteRepository.SaveAsync();
+
+        return Ok(mapper.Map<OrderDto>(order));
     }
 }
