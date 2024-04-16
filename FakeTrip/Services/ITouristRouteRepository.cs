@@ -41,5 +41,10 @@ public interface ITouristRouteRepository
     Task<IEnumerable<LineItem>> GetShoppingCartItemsByIdsAsync(IEnumerable<int> ids);
 
     void DeleteShoppingCartItems(IEnumerable<LineItem> lineItems);
+
     Task AddOrderAsync(Order order);
+
+    Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId);
+
+    public Task<Order?> GetOrderByIdAsync(Guid orderId);
 }

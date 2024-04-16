@@ -117,6 +117,7 @@ public class ShoppingCartController : ControllerBase
             State = OrderStateEnum.Pending,
             OrderItems = shoppingCart.ShoppingCartItems,
             CreateDateUTC = DateTime.UtcNow,
+            TransactionMetadata =""
         };
         shoppingCart.ShoppingCartItems = null;
         await touristRouteRepository.AddOrderAsync(order);

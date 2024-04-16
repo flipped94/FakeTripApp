@@ -153,4 +153,17 @@ public class TouristRouteRepository : ITouristRouteRepository
     {
         await appDbContext.Orders.AddAsync(order);
     }
+
+    public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId)
+    {
+        return await appDbContext.Orders.Where(o => o.UserId == userId).ToListAsync();
+    }
+
+    public async Task<Order?> GetOrderByIdAsync(Guid orderId)
+    {
+        return await appDbContext.Orders
+                .Include(o => o.OrderItems).ThenInclude(oi => oi.TouristRoute)
+                .Where(o => o.Id == orderId)
+                .FirstOrDefaultAsync();
+    }
 }
