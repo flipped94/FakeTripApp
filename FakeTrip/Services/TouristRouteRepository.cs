@@ -41,21 +41,21 @@ public class TouristRouteRepository : ITouristRouteRepository
         appDbContext.TouristRoutes.Remove(touristRoute);
     }
 
-    public TouristRoute? GetTouristRoute(Guid id)
+    public async Task<TouristRoute?> GetTouristRouteAsync(Guid id)
     {
-        return appDbContext.TouristRoutes
+        return await appDbContext.TouristRoutes
             .Include(t => t.TouristRoutePictures)
-            .FirstOrDefault(x => x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public IEnumerable<TouristRoutePicture> GetTouristRoutePicturesByTouristRouteId(Guid id)
+    public async Task<IEnumerable<TouristRoutePicture>> GetTouristRoutePicturesByTouristRouteIdAsync(Guid id)
     {
-        return appDbContext.TouristRoutePictures
+        return await appDbContext.TouristRoutePictures
             .Where(x => x.TouristRouteId == id)
-            .ToList();
+            .ToListAsync();
     }
 
-    public IEnumerable<TouristRoute> GetTouristRoutes(string? keyword, string? operatorType, int? raringValue)
+    public async Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string? keyword, string? operatorType, int? raringValue)
     {
         IQueryable<TouristRoute> result = appDbContext.TouristRoutes
             .Include(t => t.TouristRoutePictures);
@@ -73,22 +73,22 @@ public class TouristRouteRepository : ITouristRouteRepository
                 _ => result.Where(t => t.Rating == raringValue),
             };
         }
-        return result.ToList();
+        return await result.ToListAsync();
     }
 
-    public TouristRoutePicture? GetPicture(int pictureId)
+    public async Task<TouristRoutePicture?> GetPictureAsync(int pictureId)
     {
-        return appDbContext.TouristRoutePictures.FirstOrDefault(x => x.Id == pictureId);
+        return await appDbContext.TouristRoutePictures.FirstOrDefaultAsync(x => x.Id == pictureId);
     }
 
-    public bool HasTouristRoute(Guid id)
+    public async Task<bool> HasTouristRouteAsync(Guid id)
     {
-        return appDbContext.TouristRoutes.Any(x => x.Id == id);
+        return await appDbContext.TouristRoutes.AnyAsync(x => x.Id == id);
     }
 
-    public bool Save()
+    public async Task<bool> SaveAsync()
     {
-        return appDbContext.SaveChanges() >= 0;
+        return await appDbContext.SaveChangesAsync() >= 0;
     }
 
     public void DeleteTouristRoutePicture(TouristRoutePicture? picture)
@@ -96,9 +96,9 @@ public class TouristRouteRepository : ITouristRouteRepository
         appDbContext.TouristRoutePictures.Remove(picture);
     }
 
-    public IEnumerable<TouristRoute> GetTouristRoutesByIds(IEnumerable<Guid> ids)
+    public async Task<IEnumerable<TouristRoute>> GetTouristRoutesByIdsAsync(IEnumerable<Guid> ids)
     {
-        return appDbContext.TouristRoutes.Where(t => ids.Contains(t.Id)).ToList();
+        return await appDbContext.TouristRoutes.Where(t => ids.Contains(t.Id)).ToListAsync();
     }
 
     public void DeleteTouristRoutes(IEnumerable<TouristRoute> touristRoutes)

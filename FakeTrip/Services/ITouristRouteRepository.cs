@@ -4,27 +4,27 @@ namespace FakeTrip.Services;
 
 public interface ITouristRouteRepository
 {
-    IEnumerable<TouristRoute> GetTouristRoutes(string? keyword, string? operatorType, int? raringValue);
+    Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string? keyword, string? operatorType, int? raringValue);
 
-    TouristRoute? GetTouristRoute(Guid id);
+    Task<TouristRoute?> GetTouristRouteAsync(Guid id);
 
-    bool HasTouristRoute(Guid id);
+    Task<bool> HasTouristRouteAsync(Guid id);
 
-    IEnumerable<TouristRoutePicture> GetTouristRoutePicturesByTouristRouteId(Guid id);
+    Task<IEnumerable<TouristRoutePicture>> GetTouristRoutePicturesByTouristRouteIdAsync(Guid id);
 
-    TouristRoutePicture? GetPicture(int pictureId);
+    Task<TouristRoutePicture?> GetPictureAsync(int pictureId);
 
     void AddTouristRoute(TouristRoute touristRoute);
 
     void DeleteTouristRoute(TouristRoute touristRoute);
 
-    bool Save();
+    Task<bool> SaveAsync();
 
     void AddTouristRoutePicture(Guid touristRouteId, TouristRoutePicture touristRoutePicture);
 
     void DeleteTouristRoutePicture(TouristRoutePicture? picture);
 
-    IEnumerable<TouristRoute> GetTouristRoutesByIds(IEnumerable<Guid> ids);
+    Task<IEnumerable<TouristRoute>> GetTouristRoutesByIdsAsync(IEnumerable<Guid> ids);
 
     void DeleteTouristRoutes(IEnumerable<TouristRoute> touristRoutes);
 }
