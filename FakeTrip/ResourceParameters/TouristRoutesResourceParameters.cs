@@ -4,6 +4,34 @@ namespace FakeTrip.ResourceParameters;
 
 public class TouristRoutesResourceParameters
 {
+    private int pageNumber = 1;
+    public int PageNumber
+    {
+        get => pageNumber;
+        set
+        {
+            if (value >= 1)
+            {
+                pageNumber = value;
+            }
+        }
+    }
+
+    private const int maxPageSize = 50;
+    private int pageSize = 10;
+    public int PageSize
+    {
+        get => pageSize;
+        set
+        {
+            if (value >= 1)
+            {
+                pageSize = value > maxPageSize ? maxPageSize : value;
+            }
+
+        }
+    }
+
     public string? Keyword { get; set; }
 
     public string? RatingOperator { get; set; }

@@ -4,7 +4,12 @@ namespace FakeTrip.Services;
 
 public interface ITouristRouteRepository
 {
-    Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string? keyword, string? operatorType, int? raringValue);
+    Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(
+        string? keyword,
+        string? operatorType, 
+        int? raringValue,
+        int pageSize,
+        int pageNumber);
 
     Task<TouristRoute?> GetTouristRouteAsync(Guid id);
 

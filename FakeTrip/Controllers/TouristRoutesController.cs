@@ -28,8 +28,12 @@ public class TouristRoutesController : ControllerBase
     public async Task<ActionResult<TouristRouteDto>> GetTouristRoutes([FromQuery] TouristRoutesResourceParameters parameters)
     {
 
-        var touristRoutesFromRepo = await touristRouteRepository
-            .GetTouristRoutesAsync(parameters.Keyword, parameters.RatingOperator, parameters.RatingValue);
+        var touristRoutesFromRepo = await touristRouteRepository.GetTouristRoutesAsync(
+            parameters.Keyword,
+            parameters.RatingOperator,
+            parameters.RatingValue,
+            parameters.PageSize,
+            parameters.PageNumber);
         if (touristRoutesFromRepo == null || touristRoutesFromRepo.Count() <= 0)
         {
             return NotFound("没有旅游路线");

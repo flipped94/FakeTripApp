@@ -55,7 +55,12 @@ public class TouristRouteRepository : ITouristRouteRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(string? keyword, string? operatorType, int? raringValue)
+    public async Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(
+        string? keyword,
+        string? operatorType,
+        int? raringValue,
+        int pageSize,
+        int pageNumber)
     {
         IQueryable<TouristRoute> result = appDbContext.TouristRoutes
             .Include(t => t.TouristRoutePictures);
@@ -73,6 +78,12 @@ public class TouristRouteRepository : ITouristRouteRepository
                 _ => result.Where(t => t.Rating == raringValue),
             };
         }
+
+        // pagination
+        var skip = (pageNumber - 1) * pageSize;
+        result = result.Skip(skip);
+        result = result.Take(pageSize);
+
         return await result.ToListAsync();
     }
 
