@@ -1,6 +1,12 @@
+using FakeTrip.StartupConfig;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.AddStandard();
+
+builder.AddDatabaseContext();
+
+builder.AddCustomService();
 
 var app = builder.Build();
 
