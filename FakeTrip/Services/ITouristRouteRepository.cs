@@ -27,4 +27,18 @@ public interface ITouristRouteRepository
     Task<IEnumerable<TouristRoute>> GetTouristRoutesByIdsAsync(IEnumerable<Guid> ids);
 
     void DeleteTouristRoutes(IEnumerable<TouristRoute> touristRoutes);
+
+    Task CreateShoppingCartAsync(ShoppingCart shoppingCart);
+
+    Task<ShoppingCart?> GetShoppingCartByUserIdAsync(string userId);
+
+    Task AddShoppingCartItemAsync(LineItem lineItem);
+
+    Task<LineItem?> GetShoppingCartItemByItemId(int itemId);
+
+    void DeleteShoppingCartItem(LineItem lineItem);
+
+    Task<IEnumerable<LineItem>> GetShoppingCartItemsByIdsAsync(IEnumerable<int> ids);
+
+    void DeleteShoppingCartItems(IEnumerable<LineItem> lineItems);
 }

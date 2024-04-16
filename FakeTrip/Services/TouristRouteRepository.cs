@@ -105,4 +105,47 @@ public class TouristRouteRepository : ITouristRouteRepository
     {
         appDbContext.TouristRoutes.RemoveRange(touristRoutes);
     }
+
+    public async Task<ShoppingCart?> GetShoppingCartByUserIdAsync(string userId)
+    {
+        return await appDbContext.ShoppingCarts.Include(s => s.User)
+             .Include(s => s.ShoppingCartItems)
+             .ThenInclude(li => li.TouristRoute)
+             .Where(s => s.UserId == userId)
+             .FirstOrDefaultAsync();
+    }
+
+    public async Task CreateShoppingCartAsync(ShoppingCart shoppingCart)
+    {
+        await appDbContext.ShoppingCarts.AddAsync(shoppingCart);
+    }
+
+    public async Task AddShoppingCartItemAsync(LineItem lineItem)
+    {
+        await appDbContext.LineItems.AddAsync(lineItem);
+    }
+
+    public async Task<LineItem?> GetShoppingCartItemByItemId(int itemId)
+    {
+        return await appDbContext.LineItems
+                .Where(li => li.Id == itemId)
+                .FirstOrDefaultAsync();
+    }
+
+    public void DeleteShoppingCartItem(LineItem lineItem)
+    {
+        appDbContext.LineItems.Remove(lineItem);
+    }
+
+    public async Task<IEnumerable<LineItem>> GetShoppingCartItemsByIdsAsync(IEnumerable<int> ids)
+    {
+        return await appDbContext.LineItems
+               .Where(li => ids.Contains(li.Id))
+               .ToListAsync();
+    }
+
+    public void DeleteShoppingCartItems(IEnumerable<LineItem> lineItems)
+    {
+        appDbContext.LineItems.RemoveRange(lineItems);
+    }
 }
