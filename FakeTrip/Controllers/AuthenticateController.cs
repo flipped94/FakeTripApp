@@ -1,6 +1,7 @@
 ﻿using FakeTrip.Constants;
 using FakeTrip.Dtos;
 using FakeTrip.Models;
+using FakeTrip.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,15 +19,18 @@ public class AuthenticateController : ControllerBase
     private readonly IConfiguration config;
     private readonly UserManager<ApplicationUser> userManager;
     private readonly SignInManager<ApplicationUser> signInManager;
+    private readonly ITouristRouteRepository touristRouteRepository;
 
     public AuthenticateController(
         IConfiguration config,
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<ApplicationUser> signInManager,
+        ITouristRouteRepository touristRouteRepository)
     {
         this.config = config;
         this.userManager = userManager;
         this.signInManager = signInManager;
+        this.touristRouteRepository = touristRouteRepository;
     }
 
     [AllowAnonymous]

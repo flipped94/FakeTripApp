@@ -15,6 +15,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>  /* DbContext*/
 
     public DbSet<TouristRoutePicture> TouristRoutePictures { get; set; }
 
+    public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+
+    public DbSet<LineItem> LineItems { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var touristRouteJsonData = File.ReadAllText(Path.GetDirectoryName(
