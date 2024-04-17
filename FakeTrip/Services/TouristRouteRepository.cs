@@ -1,4 +1,5 @@
 ﻿using FakeTrip.Databases;
+using FakeTrip.Helpers;
 using FakeTrip.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -55,7 +56,7 @@ public class TouristRouteRepository : ITouristRouteRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(
+    public async Task<Pagination<TouristRoute>> GetTouristRoutesAsync(
         string? keyword,
         string? operatorType,
         int? raringValue,
@@ -79,12 +80,7 @@ public class TouristRouteRepository : ITouristRouteRepository
             };
         }
 
-        // pagination
-        var skip = (pageNumber - 1) * pageSize;
-        result = result.Skip(skip);
-        result = result.Take(pageSize);
-
-        return await result.ToListAsync();
+        return await Pagination<TouristRoute>.CreateAsync(pageNumber, pageSize, result);
     }
 
     public async Task<TouristRoutePicture?> GetPictureAsync(int pictureId)
@@ -165,9 +161,10 @@ public class TouristRouteRepository : ITouristRouteRepository
         await appDbContext.Orders.AddAsync(order);
     }
 
-    public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId)
+    public async Task<Pagination<Order>> GetOrdersByUserIdAsync(string userId, int pageSize, int pageNumber)
     {
-        return await appDbContext.Orders.Where(o => o.UserId == userId).ToListAsync();
+        IQueryable<Order> result = appDbContext.Orders.Where(o => o.UserId == userId);
+        return await Pagination<Order>.CreateAsync(pageNumber, pageSize, result);
     }
 
     public async Task<Order?> GetOrderByIdAsync(Guid orderId)

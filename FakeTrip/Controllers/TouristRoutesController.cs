@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FakeTrip.Constants;
 using FakeTrip.Dtos;
 using FakeTrip.Helpers;
 using FakeTrip.Models;
@@ -8,6 +7,8 @@ using FakeTrip.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace FakeTrip.Controllers;
 
@@ -17,29 +18,96 @@ public class TouristRoutesController : ControllerBase
 {
     private readonly ITouristRouteRepository touristRouteRepository;
     private readonly IMapper mapper;
+    private readonly IUrlHelper urlHelper;
 
-    public TouristRoutesController(ITouristRouteRepository touristRouteRepository, IMapper mapper)
+    public TouristRoutesController(ITouristRouteRepository touristRouteRepository,
+        IMapper mapper,
+        IUrlHelperFactory urlHelperFactory,
+            IActionContextAccessor actionContextAccessor)
     {
         this.touristRouteRepository = touristRouteRepository;
         this.mapper = mapper;
+        this.urlHelper = urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext);
     }
 
     [HttpGet]
-    public async Task<ActionResult<TouristRouteDto>> GetTouristRoutes([FromQuery] TouristRoutesResourceParameters parameters)
+    public async Task<ActionResult<IEnumerable<TouristRouteDto>>> GetTouristRoutes(
+        [FromQuery] TouristRoutesResourceParameters parameters,
+        [FromQuery] PaginationResourceParamaters parameters2)
     {
 
         var touristRoutesFromRepo = await touristRouteRepository.GetTouristRoutesAsync(
             parameters.Keyword,
             parameters.RatingOperator,
             parameters.RatingValue,
-            parameters.PageSize,
-            parameters.PageNumber);
+            parameters2.PageSize,
+            parameters2.PageNumber);
         if (touristRoutesFromRepo == null || touristRoutesFromRepo.Count() <= 0)
         {
             return NotFound("没有旅游路线");
         }
         var touristRoutesDto = mapper.Map<IEnumerable<TouristRouteDto>>(touristRoutesFromRepo);
+
+        var previousPageLink = touristRoutesFromRepo.HasPrevious
+            ? GenerateTouristRouteResourceURL(
+                parameters, parameters2, ResourceUriType.PreviousPage)
+            : null;
+
+        var nextPageLink = touristRoutesFromRepo.HasNext
+            ? GenerateTouristRouteResourceURL(
+                parameters, parameters2, ResourceUriType.NextPage)
+            : null;
+
+        // x-pagination
+        var paginationMetadata = new
+        {
+            previousPageLink,
+            nextPageLink,
+            totalCount = touristRoutesFromRepo.TotalCount,
+            pageSize = touristRoutesFromRepo.PageSize,
+            currentPage = touristRoutesFromRepo.CurrentPage,
+            totalPages = touristRoutesFromRepo.TotalPages
+        };
+
+        Response.Headers.Add("x-pagination",
+            Newtonsoft.Json.JsonConvert.SerializeObject(paginationMetadata));
+
         return Ok(touristRoutesDto);
+    }
+
+    private string GenerateTouristRouteResourceURL(
+            TouristRoutesResourceParameters paramaters,
+            PaginationResourceParamaters paramaters2,
+            ResourceUriType type
+        )
+    {
+        return type switch
+        {
+            ResourceUriType.PreviousPage => urlHelper.Link("GetTouristRoutes",
+                new
+                {
+                    keyword = paramaters.Keyword,
+                    rating = paramaters.Rating,
+                    pageNumber = paramaters2.PageNumber - 1,
+                    pageSize = paramaters2.PageSize
+                }),
+            ResourceUriType.NextPage => urlHelper.Link("GetTouristRoutes",
+                new
+                {
+                    keyword = paramaters.Keyword,
+                    rating = paramaters.Rating,
+                    pageNumber = paramaters2.PageNumber + 1,
+                    pageSize = paramaters2.PageSize
+                }),
+            _ => urlHelper.Link("GetTouristRoutes",
+                new
+                {
+                    keyword = paramaters.Keyword,
+                    rating = paramaters.Rating,
+                    pageNumber = paramaters2.PageNumber,
+                    pageSize = paramaters2.PageSize
+                })
+        };
     }
 
     [HttpGet("{id}", Name = "GetTouristRouteById")]

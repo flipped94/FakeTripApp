@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using FakeTrip.Dtos;
+using FakeTrip.ResourceParameters;
 using FakeTrip.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata;
 using System.Security.Claims;
 
 
@@ -33,10 +35,14 @@ public class OrdersController : ControllerBase
     // GET: api/<OrdersController>
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders()
+    public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(
+        [FromQuery] PaginationResourceParamaters parameters)
     {
         var userId = GetUserId();
-        var orders = await touristRouteRepository.GetOrdersByUserIdAsync(userId);
+        var orders = await touristRouteRepository.GetOrdersByUserIdAsync(
+            userId,
+            parameters.PageSize,
+            parameters.PageNumber);
         return Ok(mapper.Map<IEnumerable<OrderDto>>(orders));
     }
 

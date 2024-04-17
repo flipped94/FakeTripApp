@@ -1,12 +1,13 @@
-﻿using FakeTrip.Models;
+﻿using FakeTrip.Helpers;
+using FakeTrip.Models;
 
 namespace FakeTrip.Services;
 
 public interface ITouristRouteRepository
 {
-    Task<IEnumerable<TouristRoute>> GetTouristRoutesAsync(
+    Task<Pagination<TouristRoute>> GetTouristRoutesAsync(
         string? keyword,
-        string? operatorType, 
+        string? operatorType,
         int? raringValue,
         int pageSize,
         int pageNumber);
@@ -49,7 +50,7 @@ public interface ITouristRouteRepository
 
     Task AddOrderAsync(Order order);
 
-    Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId);
+    Task<Pagination<Order>> GetOrdersByUserIdAsync(string userId, int pageSize, int pageNumber);
 
     public Task<Order?> GetOrderByIdAsync(Guid orderId);
 }

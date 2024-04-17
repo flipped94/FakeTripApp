@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -29,11 +31,14 @@ public static class StartupConfig
     public static void AddCustomServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddTransient<ITouristRouteRepository, TouristRouteRepository>();
-        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());       
+
+        builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
     }
 
     public static void AddStandard(this WebApplicationBuilder builder)
     {
+        
         builder.Services.AddControllers(opts =>
         {
             opts.ReturnHttpNotAcceptable = true;
@@ -61,7 +66,7 @@ public static class StartupConfig
                         ContentTypes = { "application/problem+json" }
                     };
                 };
-            });
+            });        
     }
 
     public static void AddAuthServices(this WebApplicationBuilder builder)
